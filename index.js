@@ -5,14 +5,28 @@ const showForm = document.querySelector('.add-book');
 const formContainer = document.querySelector('.form-container');
 const add = document.querySelector('.add');
 const form = document.querySelector('.form-details');
+const body = document.querySelector('.main-container');
 
-//constructor
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
+// library array
+let myLibrary = [];
+
+//class constructor / declaration
+class Book {
+  constructor(title, author, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+  }
 }
+
+// function constructor
+// function Book(title, author, pages, read) {
+//   this.title = title;
+//   this.author = author;
+//   this.pages = pages;
+//   this.read = read;
+// }
 
 // let theHobbit = new Book('The Hobbit', 'J.R.R. Tolkien', 295, 'not read yet');
 
@@ -22,9 +36,6 @@ function Book(title, author, pages, read) {
 //   1154,
 //   'not read yet'
 // );
-
-// library array
-let myLibrary = [];
 
 // add book to library and display it
 function addBookToLibrary(Title, Author, Pages, Read) {
@@ -45,11 +56,12 @@ function addBookToLibrary(Title, Author, Pages, Read) {
 
   let pages = document.createElement('p');
   pages.className = 'pages';
-  pages.textContent = book.pages;
+  pages.textContent =
+    Number(book.pages) > 1 ? `${book.pages}pages` : `${book.pages}page`;
 
   let read = document.createElement('button');
   read.className = 'read';
-  read.textContent = book.read;
+  read.textContent = book.read ? 'Read' : 'Not Read';
   read.style.backgroundColor = book.read ? 'green' : 'red';
 
   let remove = document.createElement('button');
@@ -66,10 +78,12 @@ function addBookToLibrary(Title, Author, Pages, Read) {
 
 hideForm.addEventListener('click', () => {
   formContainer.classList.remove('show');
+  body.classList.remove('dim-background');
 });
 
 showForm.addEventListener('click', () => {
   formContainer.classList.add('show');
+  body.classList.add('dim-background');
 });
 
 // create book
@@ -80,8 +94,15 @@ function createBook(e) {
   let pages = document.querySelector('input[name="pages"]').value;
   let read = document.querySelector('input[name="read"]');
 
+  if (title === '' && author === '' && pages === '') {
+    alert('You need to add details of the book to proceed');
+    return;
+  }
+
   addBookToLibrary(title, author, pages, read.checked);
   form.reset();
+  formContainer.classList.remove('show');
+  body.classList.remove('dim-background');
 }
 add.addEventListener('click', createBook);
 
@@ -106,9 +127,11 @@ function toggleRead(e) {
     if (e.target.style.backgroundColor === 'red') {
       e.target.style.backgroundColor = 'green';
       myLibrary[e.target.parentElement.dataset.num].read = true;
+      e.target.textContent = 'Read';
     } else {
       e.target.style.backgroundColor = 'red';
       myLibrary[e.target.parentElement.dataset.num].read = false;
+      e.target.textContent = 'Not Read';
     }
   }
 }
